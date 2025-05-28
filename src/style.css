@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.material-icons {
+    font-size: 20px;
+}
+
+.py-6 {
+  padding-top: 23,5rem;
+  padding-bottom: 1.5rem;
+}
+.sidebar-icon {
+    @apply w-6 h-6;
+}
+
+.modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center;
+}
