@@ -80,5 +80,3 @@ export function creerElementGroupe(groupe) {
     
     return div;
 }
-
-// ...rest of your existing functions...
