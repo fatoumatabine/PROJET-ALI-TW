@@ -1,3 +1,4 @@
+// Fonctions utilitaires
 export function ajouterToastifyCSS() {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
@@ -10,6 +11,12 @@ export function ajouterToastifyCSS() {
 }
 
 export function showNotification(message, type = 'success') {
+    // Vérifie si Toastify est disponible
+    if (typeof Toastify === 'undefined') {
+        console.log(`Notification: ${message}`);
+        return;
+    }
+
     const colors = {
         success: 'linear-gradient(to right, #00b09b, #96c93d)',
         error: 'linear-gradient(to right, #ff5f6d, #ffc371)',
@@ -27,4 +34,16 @@ export function showNotification(message, type = 'success') {
         },
         close: true
     }).showToast();
+}
+
+export function debounce(func, timeout = 300) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+}
+
+export function estAdminGroupe(groupe) {
+    return groupe.admins && groupe.admins.includes('Moi');
 }
