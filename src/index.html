@@ -1,11 +1,132 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion - Chat App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"/>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-md overflow-hidden">
     
+    <!-- Header -->
+    <div class="bg-yellow-500 py-6 px-8 text-center">
+      <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+        <i class="fas fa-comments text-yellow-500 text-3xl"></i>
+      </div>
+      <h1 class="text-2xl font-bold text-white">Connectez-vous</h1>
+      <p class="text-yellow-100 mt-1">Accédez à votre espace de discussion</p>
+    </div>
+
+    <!-- Form -->
+    <form id="loginForm" class="p-8">
+      <!-- Nom -->
+      <div class="mb-6">
+        <label for="nom" class="block text-gray-700 text-sm font-medium mb-2">Nom</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-user text-gray-400"></i>
+          </div>
+          <input type="text" id="nom" required
+            class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+            placeholder="Votre nom">
+        </div>
+      </div>
+
+      <!-- Prénom -->
+      <div class="mb-6">
+        <label for="prenom" class="block text-gray-700 text-sm font-medium mb-2">Prénom</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-user-tag text-gray-400"></i>
+          </div>
+          <input type="text" id="prenom" required
+            class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+            placeholder="Votre prénom">
+        </div>
+      </div>
+
+      <!-- Numéro de téléphone -->
+      <div class="mb-6">
+        <label for="telephone" class="block text-gray-700 text-sm font-medium mb-2">Numéro de téléphone</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-phone text-gray-400"></i>
+          </div>
+          <input type="tel" id="telephone" required pattern="^\+221\d{9}$"
+            class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+            placeholder="+221XXXXXXXXX">
+        </div>
+      </div>
+
+      <!-- Options -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center">
+          <input id="remember" type="checkbox" class="h-4 w-4 text-yellow-500 focus:ring-yellow-500 border-gray-300 rounded">
+          <label for="remember" class="ml-2 block text-sm text-gray-700">Se souvenir de moi</label>
+        </div>
+        <a href="#" class="text-sm text-yellow-600 hover:text-yellow-500">Mot de passe oublié?</a>
+      </div>
+
+      <!-- Bouton -->
+      <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+        <i class="fas fa-sign-in-alt mr-2"></i> Se connecter
+      </button>
+
+      <!-- Lien inscription -->
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-600">Pas encore de compte?
+          <a href="#" class="text-yellow-600 hover:text-yellow-500 font-medium">S'inscrire</a>
+        </p>
+      </div>
+    </form>
+  </div>
+
+  <!-- Toastify JS -->
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <!-- Script de validation -->
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const nom = document.getElementById('nom').value.trim();
+      const prenom = document.getElementById('prenom').value.trim();
+      const telephone = document.getElementById('telephone').value.trim();
+      const regexTel = /^\+221\d{9}$/;
+
+      if (!nom || !prenom || !regexTel.test(telephone)) {
+        Toastify({
+          text: "Veuillez remplir tous les champs correctement",
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          style: {
+            background: "linear-gradient(to right, #ff5f6d, #ffc371)"
+          },
+          close: true
+        }).showToast();
+        return;
+      }
+
+      Toastify({
+        text: "Connexion réussie!",
+        duration: 2000,
+        gravity: "top",
+        position: "right",
+        style: {
+          background: "linear-gradient(to right, #00b09b, #96c93d)"
+        },
+        close: true
+      }).showToast();
+
+      // Redirection (par exemple vers mess.html)
+      setTimeout(() => {
+        window.location.href = "mess.html";
+      }, 1000);
+    });
+  </script>
 </body>
 </html>
