@@ -613,6 +613,7 @@ class ChatApp {
     createGroupElement(groupe) {
         const div = document.createElement('div');
         div.className = 'p-3 bg-white border rounded-lg cursor-pointer hover:bg-gray-50 transition duration-200 relative';
+        div.setAttribute('data-id', groupe.id); // Ajouter l'attribut data-id
         div.innerHTML = `
             <div class="flex items-center">
                 <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white mr-3">
@@ -672,15 +673,19 @@ class ChatApp {
             item.classList.remove('bg-yellow-50', 'border-yellow-500');
         });
         
-        // Ajouter la sélection au groupe actif
-        const selectedGroup = document.querySelector(`.group-item[data-id="${groupe.id}"]`);
-        if (selectedGroup) {
-            selectedGroup.classList.add('bg-yellow-50', 'border-yellow-500');
-        }
+        // Ajouter l'attribut data-id à l'élément du groupe lors de sa création
+        const groupElements = document.querySelectorAll('.group-item');
+        groupElements.forEach((element, index) => {
+            if (element.textContent.includes(groupe.nom)) {
+                element.setAttribute('data-id', groupe.id);
+                element.classList.add('bg-yellow-50', 'border-yellow-500');
+            }
+        });
         
+        // Mettre à jour le contact actuel et les informations
         this.data.currentContact = groupe;
         this.updateGroupInfo(groupe);
-        this.showMessages(groupe.messages);
+        this.showMessages(groupe.messages || []); // Ajouter une vérification pour messages
     }
 
     updateContactInfo(contact) {
