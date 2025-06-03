@@ -4,7 +4,7 @@
   "outputDirectory": "dist",
   "routes": [
     { 
-      "source": "/(.*)", 
+      "src": "/(.*)", 
       "destination": "/mess.html" 
     }
   ],
