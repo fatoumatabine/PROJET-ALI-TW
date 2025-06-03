@@ -88,7 +88,8 @@
   <script>
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
-
+      console.log("Form submitted");
+      
       const nomComplet = document.getElementById('nomComplet').value.trim();
       const telephone = document.getElementById('telephone').value.trim();
       const regexTel = /^\+221\d{9}$/;
