@@ -650,12 +650,34 @@ class ChatApp {
     }
 
     selectContact(contact) {
+        // Retirer la sélection précédente
+        document.querySelectorAll('.contact-item').forEach(item => {
+            item.classList.remove('bg-yellow-50', 'border-yellow-500');
+        });
+        
+        // Ajouter la sélection au contact actif
+        const selectedContact = document.querySelector(`.contact-item[data-id="${contact.id}"]`);
+        if (selectedContact) {
+            selectedContact.classList.add('bg-yellow-50', 'border-yellow-500');
+        }
+        
         this.data.currentContact = contact;
         this.updateContactInfo(contact);
         this.showMessages(contact.messages);
     }
 
     selectGroup(groupe) {
+        // Retirer la sélection précédente
+        document.querySelectorAll('.group-item').forEach(item => {
+            item.classList.remove('bg-yellow-50', 'border-yellow-500');
+        });
+        
+        // Ajouter la sélection au groupe actif
+        const selectedGroup = document.querySelector(`.group-item[data-id="${groupe.id}"]`);
+        if (selectedGroup) {
+            selectedGroup.classList.add('bg-yellow-50', 'border-yellow-500');
+        }
+        
         this.data.currentContact = groupe;
         this.updateGroupInfo(groupe);
         this.showMessages(groupe.messages);
@@ -925,7 +947,9 @@ class ChatApp {
         const modal = document.getElementById('gererGroupeModal');
         const fermerBtn = document.getElementById('fermerGestion');
 
-        fermerBtn.addEventListener('click', () => modal.remove());
+        fermerBtn.addEventListener('click', () => {
+            modal.remove();
+        });
 
         document.getElementById('voirMembres').addEventListener('click', () => {
             this.showGroupMembers(groupe);
