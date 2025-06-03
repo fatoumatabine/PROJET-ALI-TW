@@ -501,46 +501,35 @@ class ChatApp {
         const telInput = document.getElementById('nouveauTel');
         const telError = document.getElementById('telError');
 
-        // Validation du nom (pas de doublon)
         nomInput.addEventListener('input', (e) => {
-            const nomExiste = this.data.contacts.some(contact => 
-                contact.nom.toLowerCase() === e.target.value.toLowerCase()
-            );
+            const nom = e.target.value.trim();
             
-            if (nomExiste) {
+            if (nom.length === 0) {
+                nomInput.setCustomValidity('Le nom est requis');
+                nomInput.classList.add('border-red-500');
+                return;
+            }
+            
+            if (this.data.contacts.some(contact => 
+                contact.nom.toLowerCase() === nom.toLowerCase()
+            )) {
                 nomInput.setCustomValidity('Ce nom existe déjà');
-                ToastNotification.show('Ce nom existe déjà', 'error');
+                nomInput.classList.add('border-red-500');
             } else {
                 nomInput.setCustomValidity('');
-            }
-        });
-
-        // Validation du numéro de téléphone
-        telInput.addEventListener('input', (e) => {
-            let value = e.target.value;
-            
-            // Supprimer tout ce qui n'est pas un chiffre
-            value = value.replace(/[^0-9]/g, '');
-            
-            // Limiter à 9 chiffres
-            value = value.substring(0, 9);
-            
-            telInput.value = value;
-            
-            if (value.length !== 9) {
-                telError.textContent = 'Le numéro doit contenir 9 chiffres';
-                telError.classList.remove('hidden');
-            } else {
-                telError.classList.add('hidden');
+                nomInput.classList.remove('border-red-500');
             }
         });
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            
             const nom = nomInput.value.trim();
-            const tel = telInput.value.trim();
-
+            
+            if (!nom) {
+                ToastNotification.show('Le nom est requis', 'error');
+                return;
+            }
+            
             // Vérifier si le nom existe déjà
             if (this.data.contacts.some(contact => contact.nom.toLowerCase() === nom.toLowerCase())) {
                 ToastNotification.show('Ce nom existe déjà', 'error');
@@ -548,8 +537,8 @@ class ChatApp {
             }
 
             // Vérifier le format du numéro
-            if (tel.length !== 9 || !/^\d+$/.test(tel)) {
-                ToastNotification.show('Format du numéro invalide', 'error');
+            if (telInput.value.trim().length !== 9) {
+                ToastNotification.show('Le numéro de téléphone doit contenir 9 chiffres', 'error');
                 return;
             }
 
@@ -851,28 +840,35 @@ class ChatApp {
         const contactsDisponibles = this.data.contacts.filter(contact => 
             !groupe.membres.includes(contact.nom)
         );
-        
-        if (contactsDisponibles.length === 0) {
-            ToastNotification.show('Tous vos contacts sont déjà membres de ce groupe.', 'error');
-            return;
-        }
 
         const modalHtml = `
             <div id="addMemberModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <div class="bg-white rounded-lg p-6 w-96">
-                    <h3 class="text-lg font-semibold mb-4">Ajouter un membre</h3>
+                    <h3 class="text-lg font-semibold mb-4">Ajouter des membres</h3>
                     <form id="ajoutMembreForm">
                         <div class="mb-4">
-                            <label class="block text-sm font-medium mb-1">Contacts disponibles</label>
+                            <label class="block text-sm font-medium mb-1">Sélectionner des contacts</label>
                             <div class="max-h-40 overflow-y-auto border rounded-lg p-2">
                                 ${contactsDisponibles.map(contact => `
                                     <label class="flex items-center p-2 hover:bg-gray-50">
-                                        <input type="radio" name="contact" value="${contact.nom}" 
-                                            class="mr-2 text-green-500">
-                                        ${contact.nom}
+                                        <input type="checkbox" name="contacts" value="${contact.nom}" 
+                                            class="mr-2 text-yellow-500">
+                                        <span class="flex items-center">
+                                            <span class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mr-2">
+                                                ${contact.avatar}
+                                            </span>
+                                            ${contact.nom}
+                                        </span>
                                     </label>
                                 `).join('')}
                             </div>
+                        </div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span id="selectedCount" class="text-sm text-gray-500">0 membre(s) sélectionné(s)</span>
+                            <button type="button" id="selectAllBtn" 
+                                class="text-sm text-yellow-500 hover:text-yellow-600">
+                                Tout sélectionner
+                            </button>
                         </div>
                         <div class="flex justify-end space-x-2">
                             <button type="button" id="annulerAjout" 
@@ -880,7 +876,7 @@ class ChatApp {
                                 Annuler
                             </button>
                             <button type="submit" 
-                                class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                                class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
                                 Ajouter
                             </button>
                         </div>
@@ -893,29 +889,53 @@ class ChatApp {
 
         const modal = document.getElementById('addMemberModal');
         const form = document.getElementById('ajoutMembreForm');
-        const annulerBtn = document.getElementById('annulerAjout');
+        const countSpan = modal.querySelector('#selectedCount');
+        const selectAllBtn = modal.querySelector('#selectAllBtn');
+        const checkboxes = modal.querySelectorAll('input[type="checkbox"]');
+        let allSelected = false;
 
-        annulerBtn.addEventListener('click', () => modal.remove());
+        // Gérer la sélection multiple
+        selectAllBtn.addEventListener('click', () => {
+            allSelected = !allSelected;
+            checkboxes.forEach(cb => cb.checked = allSelected);
+            updateSelectedCount();
+        });
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateSelectedCount);
+        });
+
+        function updateSelectedCount() {
+            const count = [...checkboxes].filter(cb => cb.checked).length;
+            countSpan.textContent = `${count} membre(s) sélectionné(s)`;
+        }
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            const selectedContact = form.querySelector('input[name="contact"]:checked');
-            
-            if (selectedContact) {
-                const contactNom = selectedContact.value;
-                groupe.membres.push(contactNom);
-                
+            const selectedMembers = [...checkboxes]
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            if (selectedMembers.length > 0) {
+                selectedMembers.forEach(member => {
+                    groupe.membres.push(member);
+                });
+
                 groupe.messages.push({
-                    contenu: `${contactNom} a été ajouté au groupe`,
-                    envoyeur: 'moi',
+                    contenu: `${selectedMembers.join(', ')} ont été ajoutés au groupe`,
+                    envoyeur: 'Système',
                     heure: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
                 });
-                
+
                 this.showGroups();
-                ToastNotification.show(`${contactNom} a été ajouté au groupe "${groupe.nom}"`, 'success');
+                ToastNotification.show(`${selectedMembers.length} membre(s) ajouté(s) au groupe`, 'success');
                 modal.remove();
+            } else {
+                ToastNotification.show('Veuillez sélectionner au moins un membre', 'error');
             }
         });
+
+        document.getElementById('annulerAjout').addEventListener('click', () => modal.remove());
     }
 
     manageGroup(groupe) {

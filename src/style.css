@@ -17,3 +17,15 @@
 .modal-overlay {
     @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center;
 }
+
+.active-section {
+    @apply bg-yellow-200 border-yellow-600 shadow-md;
+}
+
+.sidebar-btn.active-section i {
+    @apply text-yellow-700;
+}
+
+.sidebar-btn:not(.active-section):hover {
+    @apply bg-yellow-100 border-yellow-500 transform scale-105;
+}
