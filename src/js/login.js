@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     
-    // Identifiants admin (à stocker de manière sécurisée dans un vrai projet)
+    // Credentials admin (à sécuriser dans un vrai projet)
     const ADMIN_USERNAME = "admin";
-    const ADMIN_PASSWORD = "1234";
+    const ADMIN_PASSWORD = "123";
 
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -11,9 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
 
+        // Vérification des credentials
         if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+            // Message de succès
             Toastify({
-                text: "Connexion admin réussie!",
+                text: "Connexion réussie! Redirection...",
                 duration: 2000,
                 gravity: "top",
                 position: "right",
@@ -24,12 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
             // Stocker l'état de connexion
             sessionStorage.setItem('isAdminLoggedIn', 'true');
 
+            // Redirection vers mess.html après 1 seconde
             setTimeout(() => {
-                window.location.href = "mess.html";
+                window.location.href = "/public/mess.html";
             }, 1000);
         } else {
+            // Message d'erreur
             Toastify({
-                text: "Identifiants administrateur incorrects!",
+                text: "Identifiants incorrects!",
                 duration: 3000,
                 gravity: "top",
                 position: "right",
