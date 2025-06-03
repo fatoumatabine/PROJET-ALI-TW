@@ -5,7 +5,7 @@
   "routes": [
     { 
       "src": "/(.*)", 
-      "destination": "/mess.html" 
+      "dest": "/mess.html" 
     }
   ],
   "framework": "vite"
