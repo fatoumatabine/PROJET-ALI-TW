@@ -37,47 +37,36 @@
 
     <!-- Formulaire -->
     <form id="loginForm" class="p-8">
-      <!-- Nom complet -->
+      <!-- Nom d'utilisateur admin -->
       <div class="mb-6">
-        <label for="nomComplet" class="block text-gray-700 text-sm font-medium mb-2">Nom d'utilisateur </label>
+        <label for="username" class="block text-gray-700 text-sm font-medium mb-2">Nom d'administrateur</label>
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            </i>
+            <i class="fas fa-user text-gray-400"></i>
           </div>
-          <input type="text" id="nomComplet" 
+          <input type="text" id="username" 
             class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-            placeholder="">
+            placeholder="Entrez votre nom d'admin">
         </div>
       </div>
 
-      <!-- Téléphone -->
+      <!-- Mot de passe -->
       <div class="mb-6">
-        <label for="telephone" class="block text-gray-700 text-sm font-medium mb-2">Tel:</label>
+        <label for="password" class="block text-gray-700 text-sm font-medium mb-2">Mot de passe</label>
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-         </i>
+            <i class="fas fa-lock text-gray-400"></i>
           </div>
-          <input type="tel" id="telephone"  pattern="^\+221\d{9}$"
+          <input type="password" id="password"
             class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-            placeholder="">
-        </div>
-      </div>
-
-      <!-- Options -->
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center">
-          <input id="remember" type="checkbox" class="h-2 w-4 text-yellow-500 focus:ring-yellow-500 border-gray-300 rounded">
-          <label for="remember" class="ml-2 block text-sm text-gray-700">Se souvenir de moi</label>
+            placeholder="Entrez votre mot de passe">
         </div>
       </div>
 
       <!-- Bouton -->
-      <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center">
-         Se connecter
+      <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+        Connexion Admin
       </button>
-
-      <!-- Lien inscription -->
-     
     </form>
   </div>
 
@@ -85,40 +74,6 @@
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
   <!-- Script JS -->
-  <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      console.log("Form submitted");
-      
-      const nomComplet = document.getElementById('nomComplet').value.trim();
-      const telephone = document.getElementById('telephone').value.trim();
-      const regexTel = /^\+221\d{9}$/;
-
-      if (!nomComplet || !regexTel.test(telephone)) {
-        Toastify({
-          text: "Veuillez saisir un nom complet et un numéro valide (+221XXXXXXXXX)",
-          duration: 3000,
-          gravity: "top",
-          position: "right",
-          backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-          close: true
-        }).showToast();
-        return;
-      }
-
-      Toastify({
-        text: "Connexion réussie!",
-        duration: 2000,
-        gravity: "top",
-        position: "right",
-        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
-        close: true
-      }).showToast();
-
-      setTimeout(() => {
-        window.location.href = "mess.html";
-      }, 1000);
-    });
-  </script>
+  <script src="src/js/login.js"></script>
 </body>
 </html>
