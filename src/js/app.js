@@ -1,5 +1,5 @@
 // Import des dépendances
-import { checkAuth, logout } from './auth.js';
+import { checkAuth } from './auth.js';
 
 // Base classes for data models
 export class Contact {
@@ -1320,6 +1320,12 @@ export class ChatApp {
             ToastNotification.show(`Conversation avec ${contactNom} supprimée`, 'warning');
         }
     }
+}
+
+// Export the initialization function
+export function initializeApp() {
+    const app = new ChatApp();
+    app.initialize();
 }
 
 // Initialisation
