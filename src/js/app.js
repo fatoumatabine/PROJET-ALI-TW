@@ -1,5 +1,8 @@
+// Import des dépendances
+import { checkAuth, logout } from './auth.js';
+
 // Base classes for data models
-class Contact {
+export class Contact {
     constructor(id, nom, statut, avatar, archive = false, isOnline = false) {
         this.id = id;
         this.nom = nom; 
@@ -159,7 +162,7 @@ class NotificationManager {
 }
 
 // Main Application Class
-class ChatApp {
+export class ChatApp {
     constructor() {
         this.data = {
             contacts: [
@@ -1319,7 +1322,7 @@ class ChatApp {
     }
 }
 
-// Initialize the app
+// Initialisation
 document.addEventListener('DOMContentLoaded', () => {
     const app = new ChatApp();
     app.initialize();
