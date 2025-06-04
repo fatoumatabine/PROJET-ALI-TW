@@ -185,9 +185,35 @@ class ChatApp {
         this.data.contacts[4].telephone = "78 567 89 01";
     }
 
+    setupLogout() {
+        const logoutBtn = document.querySelector('[data-section="logoutBtn"]');
+        if (logoutBtn) {
+            // Ajout de l'icône et du texte de déconnexion
+            logoutBtn.innerHTML = `
+                <i class="fas fa-sign-out-alt text-white text-2xl mb-2"></i>
+                <span class="text-white text-sm">Déconnexion</span>
+            `;
+            
+            // Gestionnaire de clic pour la déconnexion
+            logoutBtn.addEventListener('click', () => {
+                // Supprimer les données de session
+                sessionStorage.removeItem('isAdminLoggedIn');
+                
+                // Notification
+                ToastNotification.show('Déconnexion réussie', 'info');
+                
+                // Redirection vers la page de connexion après 1 seconde
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 1000);
+            });
+        }
+    }
+
     initialize() {
         ToastNotification.addCSS();
         this.setupEventListeners();
+        this.setupLogout();  // Ajout de l'initialisation du bouton de déconnexion
         this.showContacts();
         
         // Configurer la recherche en temps réel
@@ -198,6 +224,17 @@ class ChatApp {
         });
         
         document.querySelector('.sidebar-btn[data-section="messages"]').classList.add('active-section');
+
+        // Initialiser les boutons de la barre latérale
+        document.querySelectorAll('.sidebar-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const section = btn.dataset.section;
+                this.changeSection(section);
+            });
+        });
+
+        // Afficher la section messages par défaut
+        this.changeSection('messages');
     }
 
      clearDraft() {
@@ -285,12 +322,30 @@ class ChatApp {
         this.data.currentSection = section;
         
         switch(section) {
-            case 'messages': this.showContacts(); break;
-            case 'groups': this.showGroups(); break;
-            case 'broadcast': this.showBroadcast(); break;
-            case 'archives': this.showArchives(); break;
-            case 'new': this.showNewContact(); break;
+            case 'messages':
+                this.showContacts();
+                break;
+            case 'groups':
+                this.showGroups();
+                break;
+            case 'broadcast':
+                this.showBroadcast();
+                break;
+            case 'archives':
+                this.showArchives();
+                break;
+            case 'new':
+                this.showNewContact();
+                break;
+            case 'logoutBtn':
+                this.handleLogout();
+                break;
         }
+    }
+
+    handleLogout() {
+        sessionStorage.removeItem('isAdminLoggedIn');
+        window.location.href = '/';
     }
 
     showContacts() {
