@@ -1,4 +1,4 @@
-// Import des dépendances
+// Import dependencies
 import { checkAuth } from './auth.js';
 
 // Base classes for data models
@@ -164,6 +164,10 @@ class NotificationManager {
 // Main Application Class
 export class ChatApp {
     constructor() {
+        // Verify authentication first
+        checkAuth();
+
+        // Initialize data
         this.data = {
             contacts: [
                 new Contact(1, "Malick sylla", "absent", "MS", false, true),
@@ -180,12 +184,21 @@ export class ChatApp {
             listeDiffusion: []
         };
 
-        // Ajouter les numéros de téléphone
-        this.data.contacts[0].telephone = "77 123 45 67";
-        this.data.contacts[1].telephone = "76 234 56 78";
-        this.data.contacts[2].telephone = "70 345 67 89";
-        this.data.contacts[3].telephone = "75 456 78 90";
-        this.data.contacts[4].telephone = "78 567 89 01";
+        // Add phone numbers
+        this.initializePhoneNumbers();
+    }
+
+    initializePhoneNumbers() {
+        // Initialize phone numbers in a separate method for clarity
+        this.data.contacts.forEach((contact, index) => {
+            contact.telephone = [
+                "77 123 45 67",
+                "76 234 56 78",
+                "70 345 67 89",
+                "75 456 78 90",
+                "78 567 89 01"
+            ][index];
+        });
     }
 
     setupLogout() {
@@ -198,46 +211,58 @@ export class ChatApp {
             `;
             
             // Gestionnaire de clic pour la déconnexion
-            logoutBtn.addEventListener('click', () => {
-                // Supprimer les données de session
-                sessionStorage.removeItem('isAdminLoggedIn');
-                
-                // Notification
-                ToastNotification.show('Déconnexion réussie', 'info');
-                
-                // Redirection vers la page de connexion après 1 seconde
-                setTimeout(() => {
-                    window.location.href = "/";
-                }, 1000);
+            logoutBtn.addEventListener('click', this.handleLogout);
+        }
+    }
+
+    handleLogout() {
+        sessionStorage.removeItem('isAdminLoggedIn');
+        localStorage.removeItem('authToken');
+        ToastNotification.show('Déconnexion réussie', 'info');
+        
+        setTimeout(() => {
+            window.location.href = "/";
+        }, 1000);
+    }
+
+    initialize() {
+        try {
+            ToastNotification.addCSS();
+            this.setupEventListeners();
+            this.setupLogout();
+            this.showContacts();
+            
+            // Initialize search functionality
+            this.initializeSearch();
+            
+            // Set default active section
+            this.setDefaultActiveSection();
+            
+            // Initialize managers
+            ConnectionManager.checkConnection();
+            ThemeManager.initTheme();
+        } catch (error) {
+            console.error('Initialization error:', error);
+            ToastNotification.show('Error initializing app', 'error');
+        }
+    }
+
+    initializeSearch() {
+        const searchInput = document.getElementById('searchContacts');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.trim();
+                this.filterContacts(searchTerm);
             });
         }
     }
 
-    initialize() {
-        ToastNotification.addCSS();
-        this.setupEventListeners();
-        this.setupLogout();  // Ajout de l'initialisation du bouton de déconnexion
-        this.showContacts();
-        
-        // Configurer la recherche en temps réel
-        const searchInput = document.getElementById('searchContacts');
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.trim();
-            this.filterContacts(searchTerm);
-        });
-        
-        document.querySelector('.sidebar-btn[data-section="messages"]').classList.add('active-section');
-
-        // Initialiser les boutons de la barre latérale
-        document.querySelectorAll('.sidebar-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const section = btn.dataset.section;
-                this.changeSection(section);
-            });
-        });
-
-        // Afficher la section messages par défaut
-        this.changeSection('messages');
+    setDefaultActiveSection() {
+        const defaultBtn = document.querySelector('.sidebar-btn[data-section="messages"]');
+        if (defaultBtn) {
+            defaultBtn.classList.add('active-section');
+            this.changeSection('messages');
+        }
     }
 
      clearDraft() {
@@ -348,6 +373,7 @@ export class ChatApp {
 
     handleLogout() {
         sessionStorage.removeItem('isAdminLoggedIn');
+        localStorage.removeItem('authToken');
         window.location.href = '/';
     }
 
@@ -1324,8 +1350,14 @@ export class ChatApp {
 
 // Export the initialization function
 export function initializeApp() {
-    const app = new ChatApp();
-    app.initialize();
+    try {
+        const app = new ChatApp();
+        app.initialize();
+        return app;
+    } catch (error) {
+        console.error('App initialization failed:', error);
+        ToastNotification.show('Failed to initialize app', 'error');
+    }
 }
 
 // Initialisation
