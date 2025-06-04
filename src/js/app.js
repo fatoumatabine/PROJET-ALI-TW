@@ -1350,9 +1350,23 @@ export class ChatApp {
 
 // Export the initialization function
 export function initializeApp() {
+    // Vérifier si l'app est déjà initialisée
+    if (window.chatApp) {
+        return window.chatApp;
+    }
+
     try {
+        // Créer une seule instance de l'application
         const app = new ChatApp();
         app.initialize();
+        
+        // Stocker l'instance globalement
+        window.chatApp = app;
+        
+        // Initialiser les managers une seule fois
+        ConnectionManager.checkConnection();
+        ThemeManager.initTheme();
+        
         return app;
     } catch (error) {
         console.error('App initialization failed:', error);
@@ -1360,14 +1374,38 @@ export function initializeApp() {
     }
 }
 
-// Initialisation
+// Remplacer l'initialisation existante par:
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    initializeApp();
+}
+
+// Supprimer ces lignes redondantes:
+// document.addEventListener('DOMContentLoaded', () => {
+//     const app = new ChatApp();
+//     app.initialize();
+//     ConnectionManager.checkConnection();
+//     ThemeManager.initTheme();
+// });
+
+// Gérer la déconnexion de manière plus robuste
 document.addEventListener('DOMContentLoaded', () => {
-    const app = new ChatApp();
-    app.initialize();
-    ConnectionManager.checkConnection();
-    ThemeManager.initTheme();
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            if (window.chatApp) {
+                window.chatApp.handleLogout();
+            } else {
+                localStorage.removeItem('authToken');
+                window.location.href = "index.html";
+            }
+        });
+    }
 });
-document.getElementById('logoutBtn').addEventListener('click', () => {
-    localStorage.removeItem('authToken');
-    window.location.href = "index.html";
+
+// Gérer les erreurs globales
+window.addEventListener('error', (event) => {
+    console.error('Global error:', event.error);
+    ToastNotification.show('Une erreur est survenue', 'error');
 });
