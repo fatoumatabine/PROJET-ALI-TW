@@ -1349,32 +1349,23 @@ export class ChatApp {
 }
 
 // Export the initialization function
-export function initializeApp() {
-    // Vérifier si l'app est déjà initialisée
-    if (window.chatApp) {
-        return window.chatApp;
-    }
+let app = null;
 
+export function initializeApp() {
+    if (app) return app;
+    
     try {
-        // Créer une seule instance de l'application
-        const app = new ChatApp();
+        app = new ChatApp();
         app.initialize();
-        
-        // Stocker l'instance globalement
         window.chatApp = app;
-        
-        // Initialiser les managers une seule fois
-        ConnectionManager.checkConnection();
-        ThemeManager.initTheme();
-        
         return app;
     } catch (error) {
-        console.error('App initialization failed:', error);
-        ToastNotification.show('Failed to initialize app', 'error');
+        console.error('Initialization failed:', error);
+        ToastNotification.show('Erreur d\'initialisation', 'error');
     }
 }
 
-// Remplacer l'initialisation existante par:
+// Initialisation automatique quand le DOM est prêt
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeApp);
 } else {
